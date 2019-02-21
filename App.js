@@ -12,11 +12,23 @@ import {Platform, StyleSheet, Text, View, SafeAreaView, NativeModules} from 'rea
 import Button from './Button';
 import { solveBVPWithInputs, solveBVPWithoutInputs } from './computation';
 import { base64StringToNumberArray, numberArrayToBase64String } from './services';
-// import { solveBVPWithoutInputs } from './computation';
 
 const Computation = NativeModules.Computation;
 
-const solverConfig = "{\"solverConfig\":{\"epsilon\": 0.1, \"maxIterations\": 250000, \"maxResidual\": 1.0e-11, \"domain\": {\"min\": -1.0, \"max\": 1.0 }}}";
+// Define problem parameters to pass to Go and JavaScript implementations
+const solverConfigObj = {
+  solverConfig: {
+    epsilon: 0.1,
+    maxIterations: 250000,
+    maxResidual: 1.0e-11,
+    domain: {
+      min: -1.0,
+      max: 1.0
+    }
+  }
+};
+
+const solverConfig = JSON.stringify(solverConfigObj);
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -28,12 +40,12 @@ export default class App extends Component<Props> {
     };
   }
 
-  nativeCallback = (number) => {
-    this.setState({ nativeOutput: number.toString() });
+  nativeCallback = (out) => {
+    this.setState({ nativeOutput: out.toString() });
   };
 
-  javaScriptCallback = (object) => {
-    this.setState({ javaScriptOutput: object.toString() });
+  javaScriptCallback = (out) => {
+    this.setState({ javaScriptOutput: out.toString() });
   };
 
   runNativeComuptation = () => {
